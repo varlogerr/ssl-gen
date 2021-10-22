@@ -142,16 +142,23 @@ for v in  CA_DAYS \
   echo "${v} = ${val}"
 done
 
-[[ ! -d "${CA_DIR}" ]] && mkdir -p "${CA_DIR}"
+if [[ ! -d "${CA_DIR}" ]]; then
+  echo "> Creating ${CA_DIR} directory"
+  mkdir -p "${CA_DIR}"
+fi
 
-echo "> Generate ${CA_PREFIX}ca.key"
+file_realpath="$(realpath "${CA_DIR}/${CA_PREFIX}ca")"
+key_file="${file_realpath}.key"
+crt_file="${file_realpath}.crt"
+
+echo "> Generate ${key_file}"
 openssl genpkey -algorithm RSA -aes256 -outform PEM -pkeyopt rsa_keygen_bits:4096 \
   -pass pass:"${CA_PHRASE}" \
-  -out "${CA_DIR}/${CA_PREFIX}ca.key"
+  -out "${key_file}"
 
-echo "> Generate ${CA_PREFIX}ca.crt"
+echo "> Generate ${crt_file}"
 openssl req -x509 -new -nodes -sha512 -days "${CA_DAYS}" \
-  -key "${CA_DIR}/${CA_PREFIX}ca.key" \
+  -key "${key_file}" \
   -passin pass:"${CA_PHRASE}" \
   -subj "/O=${CA_CN} Org/OU=${CA_CN} Unit/CN=${CA_CN}" \
-  -out "${CA_DIR}/${CA_PREFIX}ca.crt"
+  -out "${crt_file}"

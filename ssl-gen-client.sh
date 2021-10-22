@@ -118,8 +118,6 @@ if [[ -z "${CA_PHRASE}" ]]; then
   echo
 fi
 
-[[ ! -d "${CLIENT_DIR}" ]] && mkdir -p "${CLIENT_DIR}"
-
 while ! openssl rsa -passin pass:"${CA_PHRASE}" \
       -in "${CA_DIR}/${CA_PREFIX}ca.key" > /dev/null 2>&1; do
   echo "Invalid CA Phrase!"
@@ -144,16 +142,24 @@ for v in  CA_DIR \
   echo "${v} = ${val}"
 done
 
-echo "> Generate ${CLIENT_DIR}/${CLIENT_FILENAME}.key"
+[[ ! -d "${CLIENT_DIR}" ]] && mkdir -p "${CLIENT_DIR}"
+
+file_realpath="$(realpath "${CLIENT_DIR}/${CLIENT_FILENAME}")"
+key_file="${file_realpath}.key"
+csr_file="${file_realpath}.csr"
+ext_file="${file_realpath}.ext"
+crt_file="${file_realpath}.crt"
+
+echo "> Generate ${key_file}"
 openssl genpkey -algorithm RSA -outform PEM -pkeyopt rsa_keygen_bits:2048 \
-  -out "${CLIENT_DIR}/${CLIENT_FILENAME}.key"
+  -out "${key_file}"
 
-echo "> Generate ${CLIENT_DIR}/${CLIENT_FILENAME}.csr"
-openssl req -new -key "${CLIENT_DIR}/${CLIENT_FILENAME}.key" \
+echo "> Generate ${csr_file}"
+openssl req -new -key "${key_file}" \
   -subj "/CN=${CLIENT_CN}" \
-  -out "${CLIENT_DIR}/${CLIENT_FILENAME}.csr"
+  -out "${csr_file}"
 
-echo "> Generate ${CLIENT_DIR}/${CLIENT_FILENAME}.ext"
+echo "> Generate ${ext_file}"
 while read -r l; do
   [[ -n "${l}" ]] && echo "${l}"
 done <<< "
@@ -166,13 +172,13 @@ done <<< "
   DNS.1 = ${CLIENT_CN}
   # DNS.2 = www.domain.local
   # IP.1 = 192.168.0.55
-" > "${CLIENT_DIR}/${CLIENT_FILENAME}.ext"
+" > "${ext_file}"
 
-echo "> Generate ${CLIENT_DIR}/${CLIENT_FILENAME}.crt"
-openssl x509 -req -in "${CLIENT_DIR}/${CLIENT_FILENAME}.csr" \
+echo "> Generate ${crt_file}"
+openssl x509 -req -in "${csr_file}" \
   -CA "${CA_DIR}/${CA_PREFIX}ca.crt" \
   -CAkey "${CA_DIR}/${CA_PREFIX}ca.key" \
-  -extfile "${CLIENT_DIR}/${CLIENT_FILENAME}.ext" \
+  -extfile "${ext_file}" \
   -CAcreateserial -days "${CLIENT_DAYS}" -sha256 \
   -passin pass:"${CA_PHRASE}" \
-  -out "${CLIENT_DIR}/${CLIENT_FILENAME}.crt"
+  -out "${crt_file}"
