@@ -33,6 +33,8 @@ export GEN_CLIENT_OPTS="
     # Defaults to --client-cn value
     # with '*' replaced with '_'
     : --client-filename localhost
+  --merge:merge:f
+    # Merge key and crt into single *.crt file
 "
 export GEN_CLIENT_DEMO="
   # generate to ~/certs/client directory with all

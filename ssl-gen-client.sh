@@ -43,6 +43,7 @@ CLIENT_DAYS="${OPTER_PARSED_OPTS[client-cert-days]}"
 CLIENT_CN="${OPTER_PARSED_OPTS[client-cn]}"
 CLIENT_DIR="${OPTER_PARSED_OPTS[client-dir]}"
 FORCE="${OPTER_PARSED_OPTS[force]}"
+MERGE="${OPTER_PARSED_OPTS[merge]}"
 SILENT="${OPTER_PARSED_OPTS[silent]}"
 
 # validate --force and --silent flags
@@ -185,3 +186,10 @@ openssl x509 -req -in "${csr_file}" \
   -CAcreateserial -days "${CLIENT_DAYS}" -sha256 \
   -passin pass:"${CA_PHRASE}" \
   -out "${crt_file}"
+
+if [[ ${MERGE} -eq 1 ]]; then
+  echo "> Merge into ${crt_file}"
+  chmod 0600 "${crt_file}"
+  cat "${key_file}" >> "${crt_file}"
+  rm -f "${key_file}"
+fi
