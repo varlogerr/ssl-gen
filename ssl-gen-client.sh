@@ -150,6 +150,24 @@ csr_file="${file_realpath}.csr"
 ext_file="${file_realpath}.ext"
 crt_file="${file_realpath}.crt"
 
+echo "> Generate ${ext_file}"
+{
+  marker=DNS
+  if grep -Pq '^(\d{1,3}\.){3}\d{1,3}$' <<< ${CLIENT_CN}; then
+    marker=IP
+  fi
+
+  ext_tpl="$(cat "${THE_DIR}/conf/ext.conf")"
+
+  line_num="$(
+    grep -Pn '^\s*#\s*\'${marker}'\.1\s*=' <<< "${ext_tpl}" \
+    | cut -d: -f1
+  )"
+  head -n $((line_num - 1)) <<< "${ext_tpl}"
+  echo "${marker}.1 = ${CLIENT_CN}"
+  tail -n +$((line_num + 1)) <<< "${ext_tpl}"
+} > "${ext_file}"
+
 echo "> Generate ${key_file}"
 openssl genpkey -algorithm RSA -outform PEM -pkeyopt rsa_keygen_bits:2048 \
   -out "${key_file}"
@@ -158,21 +176,6 @@ echo "> Generate ${csr_file}"
 openssl req -new -key "${key_file}" \
   -subj "/CN=${CLIENT_CN}" \
   -out "${csr_file}"
-
-echo "> Generate ${ext_file}"
-while read -r l; do
-  [[ -n "${l}" ]] && echo "${l}"
-done <<< "
-  authorityKeyIdentifier=keyid,issuer
-  basicConstraints=CA:FALSE
-  keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
-  extendedKeyUsage = serverAuth
-  subjectAltName = @alt_names
-  [alt_names]
-  DNS.1 = ${CLIENT_CN}
-  # DNS.2 = www.domain.local
-  # IP.1 = 192.168.0.55
-" > "${ext_file}"
 
 echo "> Generate ${crt_file}"
 openssl x509 -req -in "${csr_file}" \
