@@ -7,7 +7,9 @@
 . "${THE_DIR}/vars/gen-commons.sh"
 
 export GEN_CA_DESCRIPTION="
-  Generate CA certificate
+  Generate CA certificate.
+  Manual steps after generation:
+  - Chrome: chrome://settings/certificates > 'Authorities' tab
 "
 export GEN_CA_USAGE="
   ${THE_SCRIPT} --ca-cn <cn> [OPTIONS]
