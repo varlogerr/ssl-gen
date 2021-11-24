@@ -1,10 +1,7 @@
-export SSL_GEN_DIR="${SSL_GEN_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+export SSL_GEN_SCRIPTS_DIR="${SSL_GEN_SCRIPTS_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 
-export PATH="$(
-  if tr ':' '\n' <<< "${PATH}" | grep -Fx "${SSL_GEN_DIR}"; then
-    # ${SSL_GEN_DIR} is in the ${PATH}
-    echo "${PATH}"
-  else
-    echo "${SSL_GEN_DIR}:${PATH}"
-  fi
-)"
+if !  tr ':' '\n' <<< "${PATH}" | sort | uniq \
+      | grep -Fxq "${SSL_GEN_SCRIPTS_DIR}"; then
+  # ${SSL_GEN_SCRIPTS_DIR} is not in the ${PATH}
+  export PATH="${SSL_GEN_SCRIPTS_DIR}:${PATH}"
+fi
