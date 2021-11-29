@@ -105,8 +105,10 @@ optfile_content="$(
       files, i.e. ~ or \$(pwd) won't be processed
       as the home directory or current working
       directory
-    * relative paths for \`ca-dir\` and \`client-dir\`
-      are relative to the optfile directory
+    * in option file context relative paths for
+      \`ca-dir\` and \`client-dir\` are relative
+      to the directory of the opionfile they are
+      specified in
     * for flag options 0 or empty string to disable
       the flag and 1 to enable it
   "

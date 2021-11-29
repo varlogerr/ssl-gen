@@ -105,7 +105,7 @@ merge_kv_and_optfile_opts
   done <<< $(grep -v 'optfile' <<< "${AVAILABLE_OPTNAMES}")
 }
 
-{ # try to get CA phrase env variable if not set yes
+{ # try to get CA phrase env variable if not set yet
   if [[ -z "${PARSED_OPTS_KV[ca-phrase]}" ]]; then
     PARSED_OPTS_KV[ca-phrase]="${SSL_GEN_CA_PHRASE}"
   fi
