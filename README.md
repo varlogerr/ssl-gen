@@ -8,7 +8,7 @@ Old and naive set of scripts for self-signed ssl certificates generation. Not (o
 # clone the repository
 git clone https://github.com/varlogerr/ssl-gen
 # add `hook.bash` to your `.bashrc file`.
-# the hook will add the apiportal-dl-* scripts
+# the hook will add the ssl-gen-* scripts
 # directory to your PATH
 cd ssl-gen
 echo ". '$(pwd)/hook.bash'" >> ~/.bashrc
