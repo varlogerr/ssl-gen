@@ -149,7 +149,7 @@ for o in "${!PARSED_OPTS_KV[@]}"; do
 done
 echo '================='
 
-ca_dir="$(realpath "${PARSED_OPTS_KV[ca-dir]}")"
+ca_dir="${PARSED_OPTS_KV[ca-dir]}"
 if [[ ! -d "${ca_dir}" ]]; then
   echo "> Create ${ca_dir} directory"
   mkdir -p "${ca_dir}"

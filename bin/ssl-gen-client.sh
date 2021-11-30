@@ -152,7 +152,7 @@ for o in "${!PARSED_OPTS_KV[@]}"; do
 done
 echo '================='
 
-CLIENT_DIR="$(realpath "${PARSED_OPTS_KV['client-dir']}")"
+CLIENT_DIR="${PARSED_OPTS_KV['client-dir']}"
 [[ ! -d "${CLIENT_DIR}" ]] && mkdir -p "${CLIENT_DIR}"
 
 CLIENT_CN="${PARSED_OPTS_KV['client-cn']}"
