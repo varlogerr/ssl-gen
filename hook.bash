@@ -8,7 +8,7 @@ if \
   # ${SSL_GEN_BINDIR} is not in the ${PATH}
 
   if [[ ${SSL_GEN_PREPEND_PATH} == 1 ]]; then
-    # prepend ssl-gen bin path to $PATH
+    # prepend $PATH with ssl-gen bin path
     export PATH="${SSL_GEN_BINDIR}${PATH:+:${PATH}}"
   else
     # append ssl-gen bin path to $PATH
